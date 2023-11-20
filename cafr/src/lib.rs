@@ -1,7 +1,14 @@
+#[macro_use]
+extern crate log;
+
 pub mod widget;
+pub mod plugin;
+pub mod ui;
+pub mod cde;
 
 use std::fmt::Debug;
 
+use plugin::PluginLoader;
 use widget::Target;
 
 use winit::{
@@ -10,6 +17,8 @@ use winit::{
     event_loop::EventLoop,
     window::WindowBuilder,
 };
+
+use crate::cde::CDE;
 
 pub struct Executable {
     window: Window,
@@ -35,13 +44,20 @@ impl Executable {
     where
         T: Application,
     {
+        info!("Loading plugins...");
+        let mut loader = PluginLoader::new();
+        app.init(&loader);
+
+        loader.load();
+
+        let cde = CDE::new(&self.window);
+
         self.event_loop.run(move |event, elwt| {
-            println!("{event:?}");
-    
             match event {
                 Event::WindowEvent { event, window_id } if window_id == self.window.id() => match event {
                     WindowEvent::CloseRequested => elwt.exit(),
                     WindowEvent::RedrawRequested => {
+                        cde.draw();
                         app.ui();
                         // Notify the windowing system that we'll be presenting to the window.
                         self.window.pre_present_notify();
@@ -60,6 +76,8 @@ impl Executable {
 
 pub trait Application: Sized {
     type Message: Send + Debug;
+
+    fn init(&mut self,loader: &PluginLoader);
 
     fn ui(&mut self) -> Target<Self::Message>;
 }

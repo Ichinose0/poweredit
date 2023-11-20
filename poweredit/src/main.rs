@@ -15,6 +15,10 @@ impl Application for Poweredit {
     fn ui(&mut self) -> cafr::widget::Target<Self::Message> {
         Container::new().into()
     }
+
+    fn init(&mut self,loader: &cafr::plugin::PluginLoader) {
+        
+    }
 }
 
 fn main() {
