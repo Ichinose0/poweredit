@@ -5,9 +5,11 @@ pub mod widget;
 pub mod plugin;
 pub mod ui;
 pub mod cde;
+pub mod frame;
 
 use std::fmt::Debug;
 
+use frame::Frame;
 use plugin::PluginLoader;
 use widget::Target;
 
@@ -19,6 +21,13 @@ use winit::{
 };
 
 use crate::cde::CDE;
+
+#[derive(Clone,Copy,Debug)]
+pub enum Color {
+    Black,
+    White,
+    ARGB(u8,u8,u8,u8)
+}
 
 pub struct Executable {
     window: Window,
@@ -57,8 +66,9 @@ impl Executable {
                 Event::WindowEvent { event, window_id } if window_id == self.window.id() => match event {
                     WindowEvent::CloseRequested => elwt.exit(),
                     WindowEvent::RedrawRequested => {
-                        cde.draw();
-                        app.ui();
+                        let frame = app.route();
+                        cde.draw(frame.bgr());
+                        self.window.set_title(&frame.title());
                         // Notify the windowing system that we'll be presenting to the window.
                         self.window.pre_present_notify();
                     }
@@ -79,6 +89,6 @@ pub trait Application: Sized {
 
     fn init(&mut self,loader: &PluginLoader);
 
-    fn ui(&mut self) -> Target<Self::Message>;
+    fn route(&mut self) -> &dyn Frame;
 }
 

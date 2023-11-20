@@ -41,14 +41,14 @@ impl CDE {
         }    
     }
 
-    pub fn draw(&self) {
+    pub fn draw(&self,color: crate::Color) {
         unsafe {
             let mut ps: winapi::um::winuser::PAINTSTRUCT = std::mem::zeroed();
             let hdc = winapi::um::winuser::BeginPaint(self.hwnd as HWND, &mut ps);
             let mut graphics = null_mut();
             let status = gdiplus_sys2::GdipCreateFromHDC(hdc, &mut graphics);
             let mut brush = null_mut();
-            gdiplus_sys2::GdipCreateSolidFill(rgb_to_argb(255,0,125,255),&mut brush);
+            gdiplus_sys2::GdipCreateSolidFill(color_to_argb(color),&mut brush);
             GdipFillRectangleI(graphics,brush as *mut GpBrush,ps.rcPaint.left as i32,
                 ps.rcPaint.top as i32,
                 (ps.rcPaint.right - ps.rcPaint.left) as i32,
@@ -70,4 +70,12 @@ impl Drop for CDE {
 
 fn rgb_to_argb(alpha: u8, red: u8, green: u8, blue: u8) -> u32 {
     ((alpha as u32) << 24) | ((red as u32) << 16) | ((green as u32) << 8) | (blue as u32)
+}
+
+fn color_to_argb(color: crate::Color) -> u32 {
+    match color {
+        crate::Color::Black => rgb_to_argb(255,0,0,0),
+        crate::Color::White => rgb_to_argb(255,255,255,255),
+        crate::Color::ARGB(a, r, g, b) => rgb_to_argb(a,r,g,b),
+    }
 }
