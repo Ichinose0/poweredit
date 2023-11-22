@@ -1,4 +1,4 @@
-use cafr::{Application, Executable, widget::Container, frame::Frame};
+use cafr::{Application, Executable, widget::Container, frame::Frame, ApplicationEvent};
 
 #[derive(Debug)]
 pub enum Message {
@@ -12,16 +12,16 @@ pub struct Poweredit {
 impl Application for Poweredit {
     type Message = Message;
 
-    fn ui(&mut self) -> cafr::widget::Target<Self::Message> {
-        Container::new().into()
-    }
-
     fn init(&mut self,loader: &cafr::plugin::PluginLoader) {
         
     }
 
-    fn route(&mut self) -> &dyn cafr::frame::Frame {
+    fn route(&mut self,event: ApplicationEvent) -> &dyn Frame<Message = Self::Message> {
         &self.frame
+    }
+
+    fn on_close(&mut self) {
+
     }
 }
 
@@ -38,8 +38,10 @@ impl Frame for MyFrame {
         "サンプルフレーム".to_owned()
     }
 
-    fn ui(&mut self) -> cafr::widget::Target<Self::Message> {
-        todo!()
+    fn ui(&self) -> cafr::widget::Target<Self::Message> {
+        let button = cafr::widget::Button::new();
+        button.build()
+        
     }
 }
 

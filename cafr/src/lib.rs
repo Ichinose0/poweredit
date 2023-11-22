@@ -29,6 +29,11 @@ pub enum Color {
     ARGB(u8,u8,u8,u8)
 }
 
+pub enum ApplicationEvent {
+    RedrawRequested,
+    KeyboardInput(char)
+}
+
 pub struct Executable {
     window: Window,
     event_loop: EventLoop<()>
@@ -66,8 +71,9 @@ impl Executable {
                 Event::WindowEvent { event, window_id } if window_id == self.window.id() => match event {
                     WindowEvent::CloseRequested => elwt.exit(),
                     WindowEvent::RedrawRequested => {
-                        let frame = app.route();
-                        cde.draw(frame.bgr());
+                        let mut frame = app.route(ApplicationEvent::RedrawRequested);
+                        let target = frame.ui();
+                        cde.draw(frame.bgr(),&target);
                         self.window.set_title(&frame.title());
                         // Notify the windowing system that we'll be presenting to the window.
                         self.window.pre_present_notify();
@@ -89,6 +95,8 @@ pub trait Application: Sized {
 
     fn init(&mut self,loader: &PluginLoader);
 
-    fn route(&mut self) -> &dyn Frame;
+    fn route(&mut self,event: ApplicationEvent) -> &dyn Frame<Message = Self::Message>;
+
+    fn on_close(&mut self);
 }
 

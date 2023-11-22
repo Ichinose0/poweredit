@@ -4,14 +4,23 @@ use gdiplus_sys2::*;
 use raw_window_handle::HasWindowHandle;
 use winapi::{um::{winuser::GetDC, wingdi::{CreateSolidBrush, RGB}}, shared::minwindef::FALSE};
 
+use crate::widget::Target;
+
 #[derive(Debug)]
-pub struct CDE {
+pub struct CDE<T> 
+where
+    T: Send + std::fmt::Debug
+{
     token: usize,
     input: GdiplusStartupInput,
     hwnd: isize,
+    msg: Option<T>
 }
 
-impl CDE {
+impl<T> CDE<T> 
+where
+    T: Send + std::fmt::Debug
+{
     pub fn new(handle: &impl HasWindowHandle) -> Self {
         let handle = handle.window_handle().unwrap();
         match handle.as_raw() {
@@ -34,6 +43,7 @@ impl CDE {
                         token,
                         input,
                         hwnd:handle.hwnd.into(),
+                        msg: None
                     }
                 }
             },
@@ -41,7 +51,7 @@ impl CDE {
         }    
     }
 
-    pub fn draw(&self,color: crate::Color) {
+    pub fn draw(&self,color: crate::Color,target: &Target<T>) {
         unsafe {
             let mut ps: winapi::um::winuser::PAINTSTRUCT = std::mem::zeroed();
             let hdc = winapi::um::winuser::BeginPaint(self.hwnd as HWND, &mut ps);
@@ -60,7 +70,10 @@ impl CDE {
     }
 }
 
-impl Drop for CDE {
+impl<T> Drop for CDE<T> 
+where
+    T: Send + std::fmt::Debug
+{
     fn drop(&mut self) {
         unsafe {
             GdiplusShutdown(self.token);

@@ -1,9 +1,10 @@
 use crate::{Color, widget::Target};
+use std::fmt::Debug;
 
-pub trait Frame: Sized {
-    type Message: Send + std::fmt::Debug;
+pub trait Frame {
+    type Message: Send + Debug;
 
     fn bgr(&self) -> Color;
     fn title(&self) -> String;
-    fn ui(&mut self) -> Target<Self::Message>;
+    fn ui(&self) -> Target<Self::Message>;
 }
