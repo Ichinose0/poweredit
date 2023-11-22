@@ -1,11 +1,31 @@
+use crate::Color;
+
 pub struct Target<T> {
     pub(crate)widget: Box<dyn Widget>,
     pub(crate)msg: Option<T>
 }
 
+impl<T> Target<T> {
+    pub fn get(&self) -> Vec<&Box<dyn Widget>> {
+        vec![&self.widget]
+    }
+}
+
 pub trait Widget {
     fn width(&self) -> u32;
     fn height(&self) -> u32;
+    fn color(&self) -> Color;
+    fn shadow(&self) -> Shadow {
+        Shadow {
+            color: Color::ARGB(255,128,128,128),
+            border: 1
+        }
+    }
+}
+
+pub struct Shadow {
+    pub(crate) color: Color,
+    pub(crate) border: u32
 }
 
 pub struct Container<T> 
@@ -43,6 +63,10 @@ impl Widget for _Container {
     fn height(&self) -> u32 {
         30
     }
+
+    fn color(&self) -> Color {
+        Color::White
+    }
 }
 
 pub struct Button<T> 
@@ -62,6 +86,16 @@ where
 
     pub fn text(mut self,text: String) -> Self {
         self.inner.text = text;
+        self
+    }
+
+    pub fn width(mut self,width: u32) -> Self {
+        self.inner.width = width;
+        self
+    }
+
+    pub fn height(mut self,height: u32) -> Self {
+        self.inner.height = height;
         self
     }
 
@@ -100,6 +134,10 @@ where
 {
     fn width(&self) -> u32 {
         self.width
+    }
+
+    fn color(&self) -> Color {
+        Color::White
     }
 
     fn height(&self) -> u32 {

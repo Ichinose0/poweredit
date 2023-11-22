@@ -57,15 +57,43 @@ where
             let hdc = winapi::um::winuser::BeginPaint(self.hwnd as HWND, &mut ps);
             let mut graphics = null_mut();
             let status = gdiplus_sys2::GdipCreateFromHDC(hdc, &mut graphics);
+
+            //Drawing start
+
+            self.draw_background(color,&ps,graphics);
+
+            for i in target.get() {
+                let mut brush = null_mut();
+                gdiplus_sys2::GdipCreateSolidFill(color_to_argb(i.color()),&mut brush);
+                let shadow = i.shadow();
+                let mut blur = null_mut();
+                gdiplus_sys2::GdipCreateSolidFill(color_to_argb(shadow.color),&mut blur);
+                GdipFillRectangleI(graphics,blur as *mut GpBrush,(30-shadow.border) as i32,
+                    (30-shadow.border) as i32,
+                (i.width()+shadow.border*2) as i32,
+                (i.height()+shadow.border*2) as i32);
+                GdipFillRectangleI(graphics,brush as *mut GpBrush,30,
+                    30,
+                    i.width() as i32,
+                    i.height() as i32);
+                    GdipDeleteBrush(blur as *mut GpBrush);
+                    GdipDeleteBrush(brush as *mut GpBrush);
+            }
+            GdipDeleteGraphics(graphics);
+            winapi::um::winuser::EndPaint(self.hwnd as HWND,&ps);
+        }
+    }
+
+    fn draw_background(&self,color: crate::Color,ps: &winapi::um::winuser::PAINTSTRUCT,graphics: *mut GpGraphics) {
+        unsafe {
             let mut brush = null_mut();
+            
             gdiplus_sys2::GdipCreateSolidFill(color_to_argb(color),&mut brush);
             GdipFillRectangleI(graphics,brush as *mut GpBrush,ps.rcPaint.left as i32,
                 ps.rcPaint.top as i32,
                 (ps.rcPaint.right - ps.rcPaint.left) as i32,
                 (ps.rcPaint.bottom - ps.rcPaint.top) as i32);
-                GdipDeleteGraphics(graphics);
                 GdipDeleteBrush(brush as *mut GpBrush);
-            winapi::um::winuser::EndPaint(self.hwnd as HWND, &ps);
         }
     }
 }

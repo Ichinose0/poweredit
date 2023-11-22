@@ -39,7 +39,11 @@ impl Frame for MyFrame {
     }
 
     fn ui(&self) -> cafr::widget::Target<Self::Message> {
-        let button = cafr::widget::Button::new();
+        let button = cafr::widget::Button::new()
+                                            .text(String::from("ボタン"))
+                                            .width(500)
+                                            .height(500);
+
         button.build()
         
     }
