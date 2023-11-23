@@ -11,7 +11,7 @@ use std::fmt::Debug;
 
 use frame::Frame;
 use plugin::PluginLoader;
-use widget::Target;
+use widget::Element;
 
 use winit::{
     window::Window,
@@ -20,7 +20,7 @@ use winit::{
     window::WindowBuilder,
 };
 
-use crate::cde::CDE;
+use cde::CDE;
 
 #[derive(Clone,Copy,Debug)]
 pub enum Color {
@@ -72,8 +72,8 @@ impl Executable {
                     WindowEvent::CloseRequested => elwt.exit(),
                     WindowEvent::RedrawRequested => {
                         let mut frame = app.route(ApplicationEvent::RedrawRequested);
-                        let target = frame.ui();
-                        cde.draw(frame.bgr(),&target);
+                        let Element = frame.ui();
+                        cde.draw(frame.bgr(),&Element);
                         self.window.set_title(&frame.title());
                         // Notify the windowing system that we'll be presenting to the window.
                         self.window.pre_present_notify();

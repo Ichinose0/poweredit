@@ -4,7 +4,7 @@ use gdiplus_sys2::*;
 use raw_window_handle::HasWindowHandle;
 use winapi::{um::{winuser::{GetDC, DrawTextW, DT_LEFT, DT_WORDBREAK}, wingdi::{CreateSolidBrush, RGB, SetBkColor, SetTextColor, TextOutW, CreateFontW, FW_BOLD, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, VARIABLE_PITCH, SHIFTJIS_CHARSET, FF_ROMAN, SelectObject, DeleteObject, FF_DONTCARE, FF_MODERN, FW_SEMIBOLD}}, shared::{minwindef::FALSE, windef::RECT}};
 
-use crate::widget::{Target, Shadow};
+use crate::widget::{Element, Shadow, Target};
 
 #[derive(Debug)]
 pub struct CDE<T> 
@@ -63,22 +63,20 @@ where
             self.draw_background(color,&ps,graphics);
 
             for i in target.get() {
-                
-
-                match i.widget_type() {
+                match i.widget.widget_type() {
                     crate::widget::WidgetType::Rectangle => {
-                        self.draw_rectangle(graphics,i.color(),i.shadow(),30,30,i.width() as i32,i.height() as i32);
+                        self.draw_rectangle(graphics,i.widget.color(),i.widget.shadow(),30,30,i.widget.width() as i32,i.widget.height() as i32);
                     },
                     crate::widget::WidgetType::Circle => todo!(),
                     crate::widget::WidgetType::Text => {
-                        let s = i.title();
+                        let s = i.widget.title();
                         let mut v: Vec<u16> = s.encode_utf16().collect();
                         v.push(0);
                         let f = "Elite";
                         let mut font_name: Vec<u16> = s.encode_utf16().collect();
                         font_name.push(0);
                         SetBkColor(hdc,color_to_rgb(color));
-                        SetTextColor(hdc, color_to_rgb(i.color()));
+                        SetTextColor(hdc, color_to_rgb(i.widget.color()));
 
                         let font = CreateFontW(30,0,0,0,0,0,0,0,SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,VARIABLE_PITCH | FF_MODERN, font_name.as_ptr());
 
@@ -88,7 +86,7 @@ where
                     },
                 }
 
-                let shadow = i.shadow();
+                let shadow = i.widget.shadow();
                 
             }
             GdipDeleteGraphics(graphics);

@@ -1,12 +1,12 @@
 use crate::Color;
 
-use super::{Target, Widget, WidgetType};
+use super::{Element, Widget, WidgetType, Target};
 
 pub struct Text<T> 
 where
     T: Send + std::fmt::Debug
 {
-    inner: _Text<T>
+    pub(crate) inner: _Text<T>
 }
 
 impl<T> Text<T>
@@ -31,11 +31,22 @@ where
         self.inner.height = height;
         self
     }
+    
+    pub fn element(self) -> Element<T> {
+        Element {
+            widget: Box::new(self.inner),
+            msg: None
+        }
+    }
 
     pub fn build(self) -> Target<T> {
         Target {
-            widget: Box::new(self.inner),
-            msg: None
+            inner: vec![
+                Element {
+                    widget: Box::new(self.inner),
+                    msg: None
+                }
+            ]
         }
     }
 }

@@ -12,12 +12,24 @@ pub enum WidgetType {
     Text
 }
 
-pub struct Target<T> {
+pub struct Target<T>
+{
+    pub(crate) inner: Vec<Element<T>>
+}
+
+impl<T> Target<T>
+{
+    pub fn get(&self) -> &[Element<T>] {
+        &self.inner
+    }
+}
+
+pub struct Element<T> {
     pub(crate)widget: Box<dyn Widget>,
     pub(crate)msg: Option<T>
 }
 
-impl<T> Target<T> {
+impl<T> Element<T> {
     pub fn get(&self) -> Vec<&Box<dyn Widget>> {
         vec![&self.widget]
     }
@@ -59,8 +71,8 @@ pub struct Shadow {
 //         }
 //     }
 
-//     pub fn build(self) -> Target<T> {
-//         Target {
+//     pub fn build(self) -> Element<T> {
+//         Element {
 //             widget: Box::new(_Container {}),
 //             msg: None,
 //         }

@@ -1,6 +1,6 @@
 use crate::Color;
 
-use super::{Target, Widget, WidgetType};
+use super::{Element, Widget, WidgetType, Text, Target};
 
 pub struct Button<T> 
 where
@@ -32,10 +32,25 @@ where
         self
     }
 
-    pub fn build(self) -> Target<T> {
-        Target {
+    pub fn element(self) -> Element<T> {
+        Element {
             widget: Box::new(self.inner),
             msg: None
+        }
+    }
+
+    pub fn build(self) -> Target<T> {
+        let text = Text::new()
+                        .text(self.inner.text.clone());
+                    
+        Target {
+            inner: vec![
+                Element {
+                    widget: Box::new(self.inner),
+                    msg: None
+                },
+                text.element(),
+            ]
         }
     }
 }
@@ -70,7 +85,7 @@ where
     }
 
     fn color(&self) -> Color {
-        Color::Black
+        Color::White
     }
 
     fn height(&self) -> u32 {
