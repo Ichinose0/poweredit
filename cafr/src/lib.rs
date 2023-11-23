@@ -75,6 +75,7 @@ impl Executable {
                         let Element = frame.ui();
                         cde.draw(frame.bgr(),&Element);
                         self.window.set_title(&frame.title());
+                        //self.window.set_resizable(*&frame.resizable());
                         // Notify the windowing system that we'll be presenting to the window.
                         self.window.pre_present_notify();
                     }

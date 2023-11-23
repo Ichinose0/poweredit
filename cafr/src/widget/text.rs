@@ -31,6 +31,16 @@ where
         self.inner.height = height;
         self
     }
+
+    pub fn x(mut self,x: u32) -> Self {
+        self.inner.x = x;
+        self
+    }
+
+    pub fn y(mut self,y: u32) -> Self {
+        self.inner.y = y;
+        self
+    }
     
     pub fn element(self) -> Element<T> {
         Element {
@@ -57,7 +67,7 @@ where
 {
     fn default() -> Self {
         Self {
-            inner: _Text { on_click: Default::default(), text: "".to_owned(), width: 120, height: 40 },
+            inner: _Text { on_click: Default::default(), text: "".to_owned(), width: 120, height: 40, color: Color::Black, background_color: Color::White, x: 30, y: 30 },
         }
     }
 }
@@ -69,6 +79,10 @@ where
     text: String,
     width: u32,
     height: u32,
+    x: u32,
+    y: u32,
+    color: Color,
+    background_color: Color,
     on_click: Option<T>
 }
 
@@ -80,8 +94,20 @@ where
         self.width
     }
 
+    fn x(&self) -> u32 {
+        self.x
+    }
+
+    fn y(&self) -> u32 {
+        self.y
+    }
+
     fn color(&self) -> Color {
-        Color::Black
+        self.color
+    }
+
+    fn background_color(&self) -> Color {
+        self.background_color
     }
 
     fn height(&self) -> u32 {

@@ -38,7 +38,10 @@ impl<T> Element<T> {
 pub trait Widget {
     fn width(&self) -> u32;
     fn height(&self) -> u32;
+    fn x(&self) -> u32;
+    fn y(&self) -> u32;
     fn color(&self) -> Color;
+    fn background_color(&self) -> Color;
     fn shadow(&self) -> Shadow {
         Shadow {
             color: Color::ARGB(255,128,128,128),

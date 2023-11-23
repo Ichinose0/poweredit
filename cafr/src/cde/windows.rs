@@ -2,7 +2,7 @@ use std::ptr::{null,null_mut};
 
 use gdiplus_sys2::*;
 use raw_window_handle::HasWindowHandle;
-use winapi::{um::{winuser::{GetDC, DrawTextW, DT_LEFT, DT_WORDBREAK}, wingdi::{CreateSolidBrush, RGB, SetBkColor, SetTextColor, TextOutW, CreateFontW, FW_BOLD, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, VARIABLE_PITCH, SHIFTJIS_CHARSET, FF_ROMAN, SelectObject, DeleteObject, FF_DONTCARE, FF_MODERN, FW_SEMIBOLD}}, shared::{minwindef::FALSE, windef::RECT}};
+use winapi::{um::{winuser::{GetDC, DrawTextW, DT_LEFT, DT_WORDBREAK}, wingdi::{CreateSolidBrush, RGB, SetBkColor, SetTextColor, TextOutW, CreateFontW, FW_BOLD, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, VARIABLE_PITCH, SHIFTJIS_CHARSET, FF_ROMAN, SelectObject, DeleteObject, FF_DONTCARE, FF_MODERN, FW_SEMIBOLD, SetBkMode, TRANSPARENT}}, shared::{minwindef::FALSE, windef::RECT}};
 
 use crate::widget::{Element, Shadow, Target};
 
@@ -65,7 +65,7 @@ where
             for i in target.get() {
                 match i.widget.widget_type() {
                     crate::widget::WidgetType::Rectangle => {
-                        self.draw_rectangle(graphics,i.widget.color(),i.widget.shadow(),30,30,i.widget.width() as i32,i.widget.height() as i32);
+                        self.draw_rectangle(graphics,i.widget.background_color(),i.widget.shadow(),i.widget.x() as i32,i.widget.y() as i32,i.widget.width() as i32,i.widget.height() as i32);
                     },
                     crate::widget::WidgetType::Circle => todo!(),
                     crate::widget::WidgetType::Text => {
@@ -75,13 +75,14 @@ where
                         let f = "Elite";
                         let mut font_name: Vec<u16> = s.encode_utf16().collect();
                         font_name.push(0);
-                        SetBkColor(hdc,color_to_rgb(color));
+                        //SetBkColor(hdc,color_to_rgb(color));
+                        SetBkMode(hdc, TRANSPARENT as i32);
                         SetTextColor(hdc, color_to_rgb(i.widget.color()));
 
-                        let font = CreateFontW(30,0,0,0,0,0,0,0,SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,VARIABLE_PITCH | FF_MODERN, font_name.as_ptr());
+                        let font = CreateFontW(i.widget.height() as i32,0,0,0,0,0,0,0,SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,VARIABLE_PITCH | FF_MODERN, font_name.as_ptr());
 
                         SelectObject(hdc, font as *mut c_void);
-                        TextOutW(hdc,10, 10,v.as_ptr(),v.len() as i32);
+                        TextOutW(hdc,i.widget.x() as i32, i.widget.y() as i32,v.as_ptr(),v.len() as i32);
                         DeleteObject(font as *mut c_void);
                     },
                 }

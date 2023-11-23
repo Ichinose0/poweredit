@@ -40,11 +40,15 @@ impl Frame for MyFrame {
 
     fn ui(&self) -> cafr::widget::Target<Self::Message> {
         let text = cafr::widget::Button::new()
-                                            .text(String::from("ボタン"))
-                                            .width(500)
-                                            .height(500);
+                                            .width(240)
+                                            .height(80)
+                                            .text(String::from("ボタン"));
 
         text.build()
+    }
+
+    fn resizable(&self) -> bool {
+        true
     }
 }
 

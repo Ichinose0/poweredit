@@ -32,6 +32,16 @@ where
         self
     }
 
+    pub fn x(mut self,x: u32) -> Self {
+        self.inner.x = x;
+        self
+    }
+
+    pub fn y(mut self,y: u32) -> Self {
+        self.inner.y = y;
+        self
+    }
+
     pub fn element(self) -> Element<T> {
         Element {
             widget: Box::new(self.inner),
@@ -40,8 +50,14 @@ where
     }
 
     pub fn build(self) -> Target<T> {
+        let string = &self.inner.text;
+        let x = (self.inner.x+self.inner.width/3)-string.len() as u32;
+        let y = self.inner.y+self.inner.height/4;
         let text = Text::new()
-                        .text(self.inner.text.clone());
+                        .text(string.clone())
+                        .x(x)
+                        .y(y)
+                        .height(self.inner.height/2);
                     
         Target {
             inner: vec![
@@ -61,7 +77,7 @@ where
 {
     fn default() -> Self {
         Self {
-            inner: _Button { on_click: Default::default(), text: "".to_owned(), width: 120, height: 40 },
+            inner: _Button { on_click: Default::default(), text: "".to_owned(), width: 120, height: 40, x: 30, y: 30 },
         }
     }
 }
@@ -73,6 +89,8 @@ where
     text: String,
     width: u32,
     height: u32,
+    x: u32,
+    y: u32,
     on_click: Option<T>
 }
 
@@ -84,7 +102,19 @@ where
         self.width
     }
 
+    fn x(&self) -> u32 {
+        self.x
+    }
+
+    fn y(&self) -> u32 {
+        self.y
+    }
+
     fn color(&self) -> Color {
+        Color::Black
+    }
+
+    fn background_color(&self) -> Color {
         Color::White
     }
 
