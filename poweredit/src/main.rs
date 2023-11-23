@@ -1,4 +1,4 @@
-use cafr::{Application, Executable, widget::Container, frame::Frame, ApplicationEvent};
+use cafr::{Application, Executable, frame::Frame, ApplicationEvent};
 
 #[derive(Debug)]
 pub enum Message {
@@ -39,13 +39,12 @@ impl Frame for MyFrame {
     }
 
     fn ui(&self) -> cafr::widget::Target<Self::Message> {
-        let button = cafr::widget::Button::new()
+        let text = cafr::widget::Text::new()
                                             .text(String::from("ボタン"))
                                             .width(500)
                                             .height(500);
 
-        button.build()
-        
+        text.build()
     }
 }
 

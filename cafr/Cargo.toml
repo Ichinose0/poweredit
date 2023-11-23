@@ -17,5 +17,5 @@ features = [
     "winuser",
     "windef",
     "wingdi",
-    "ntdef"
+    "ntdef",
 ]

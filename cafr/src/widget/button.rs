@@ -1,73 +1,6 @@
 use crate::Color;
 
-pub struct Target<T> {
-    pub(crate)widget: Box<dyn Widget>,
-    pub(crate)msg: Option<T>
-}
-
-impl<T> Target<T> {
-    pub fn get(&self) -> Vec<&Box<dyn Widget>> {
-        vec![&self.widget]
-    }
-}
-
-pub trait Widget {
-    fn width(&self) -> u32;
-    fn height(&self) -> u32;
-    fn color(&self) -> Color;
-    fn shadow(&self) -> Shadow {
-        Shadow {
-            color: Color::ARGB(255,128,128,128),
-            border: 1
-        }
-    }
-}
-
-pub struct Shadow {
-    pub(crate) color: Color,
-    pub(crate) border: u32
-}
-
-pub struct Container<T> 
-where
-    T: Send + std::fmt::Debug
-{
-    on_click: Option<T>
-}
-
-impl<T> Container<T>
-where
-    T: Send + std::fmt::Debug
-{
-    pub fn new() -> Self {
-        Self {
-            on_click: None
-        }
-    }
-
-    pub fn build(self) -> Target<T> {
-        Target {
-            widget: Box::new(_Container {}),
-            msg: None,
-        }
-    }
-}
-
-pub struct _Container {}
-
-impl Widget for _Container {
-    fn width(&self) -> u32 {
-        30
-    }
-
-    fn height(&self) -> u32 {
-        30
-    }
-
-    fn color(&self) -> Color {
-        Color::White
-    }
-}
+use super::{Target, Widget, WidgetType};
 
 pub struct Button<T> 
 where
@@ -137,10 +70,18 @@ where
     }
 
     fn color(&self) -> Color {
-        Color::White
+        Color::Black
     }
 
     fn height(&self) -> u32 {
         self.height
+    }
+
+    fn widget_type(&self) -> WidgetType {
+        WidgetType::Rectangle
+    }
+
+    fn title(&self) -> &str {
+        &self.text
     }
 }
